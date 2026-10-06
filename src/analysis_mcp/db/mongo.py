@@ -34,5 +34,12 @@ def get_client() -> AsyncIOMotorClient:
     return _client
 
 
+def close_client() -> None:
+    global _client
+    if _client is not None:
+        _client.close()
+        _client = None
+
+
 def get_database() -> AsyncIOMotorDatabase:
     return get_client()[get_settings().mongodb_database]
