@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "analysis-mcp": {
+      "command": "python",
+      "args": [
+        "C:/path/to/AnalysisMCP1.1/src/analysis_mcp/server.py"
+      ],
+      "env": {
+        "MONGODB_HOST": "localhost",
+        "MONGODB_PORT": "27017",
+        "MONGODB_DATABASE": "analysis_mcp_demo",
+        "MCP_TRANSPORT": "stdio"
+      }
+    }
+  }
+}

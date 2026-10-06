@@ -1,0 +1,29 @@
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Any
+
+
+def parse_date(value: str | None) -> str | None:
+    if value in (None, ""):
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).date().isoformat()
+    except ValueError:
+        return value
+
+
+def normalise_model_name(value: Any) -> str:
+    if value is None:
+        return "Unknown"
+    return str(value)
+
+
+def safe_tool_call(fn):
+    def wrapper(*args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
+        except Exception as exc:  # pragma: no cover - safety layer for MCP tools
+            return {"ok": False, "error": str(exc)}
+
+    return wrapper
