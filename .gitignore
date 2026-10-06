@@ -1,0 +1,42 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Local-only demo material and machine-specific client configs
+DEMO.md
+ARCHITECTURE.md
+.mcp.json
+demo/claude_desktop_config.json
+
+# Pre-publish scan terms (lists the strings that must never appear)
+.publish-denylist
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+
+# Test, coverage and tool caches
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
