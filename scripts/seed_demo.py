@@ -24,21 +24,23 @@ def build_demo_seed() -> dict[str, Any]:
     """Return the seed payload used by the demo and verify scripts."""
     today = date.today()
     window_start = today - timedelta(days=89)
-    rng = random.Random(42)
+    rng = random.Random(20261006)
 
     first_names = [
-        "Ava", "Noah", "Mila", "Leo", "Zoe", "Eli", "Nia", "Owen", "Ivy", "Kai",
-        "Luna", "Milo", "Sage", "Finn", "Jade", "Theo", "Ruby", "Ezra", "Ari", "Skye",
-        "Isaac", "Piper", "Aiden", "Vera", "Mason", "Dahlia", "Asher", "Cora", "Lucas",
-        "Nora", "Ronan", "Elia", "Maya", "Jasper", "Lena", "Silas", "Harper", "Toby",
-        "Iris", "Caleb", "Anya", "Rowan", "Nina", "Julian", "Sofia", "Theo",
+        "Avery", "Mateo", "Sienna", "Julian", "Priya", "Omar", "Elena", "Jalen",
+        "Harper", "Lucas", "Nadia", "Darius", "Camila", "Theo", "Zuri", "Arjun",
+        "Layla", "Marco", "Rhea", "Samir", "Noor", "Oscar", "Sofia", "Devon",
+        "Iris", "Adrian", "Keira", "Rafael", "Amara", "Noel", "Talia", "Ethan",
+        "Lena", "Victor", "Maya", "Dylan", "Cora", "Nolan", "Anika", "Ibrahim",
+        "Selene", "Kian", "Alina", "Gabriel",
     ]
     last_names = [
-        "Bennet", "Morris", "Hale", "Nguyen", "Parker", "Harrow", "Liu", "Frost",
-        "Santos", "Rowe", "Kim", "Reed", "Carter", "Bell", "Scott", "Ibarra",
-        "Shaw", "Owens", "Price", "Dunn", "Ross", "Miller", "Bishop", "Irvine",
-        "Chen", "Baker", "Cole", "Patel", "Stone", "Davis", "Ward", "Turner",
-        "Hughes", "Wells", "Foster", "Murphy", "Young", "Brooks", "Morris", "Page",
+        "Liu", "Moreno", "Patel", "Stone", "Bass", "Hernandez", "Rao", "Nguyen",
+        "Santos", "Walters", "Bishop", "Hughes", "Choi", "Rivera", "Keller", "Ibarra",
+        "Mendez", "Parikh", "Osei", "Garcia", "Bennett", "Rossi", "Nolan", "Singh",
+        "Foster", "Mora", "Sharma", "Khan", "Ochoa", "Bautista", "Adebayo", "Quinn",
+        "Murphy", "Chambers", "Ali", "Jensen", "Vargas", "Wells", "Norris", "Hale",
+        "Mendoza", "Sanchez",
     ]
 
     users: list[dict[str, Any]] = []
@@ -52,7 +54,7 @@ def build_demo_seed() -> dict[str, Any]:
                 "_id": f"user-{index + 1:02d}",
                 "name": f"{first_name} {last_name}",
                 "username": username,
-                "email": f"{username}@example.com",
+                "email": f"{username}@northstarlabs.io",
                 "role": "analyst" if index % 2 == 0 else "product",
                 "createdAt": created_at.isoformat(),
             }
@@ -60,73 +62,73 @@ def build_demo_seed() -> dict[str, Any]:
 
     agents = [
         {
-            "id": "agent-claude-ops",
-            "name": "Ops Analyst",
-            "description": "Summarizes operational risk and trends.",
+            "id": "agent-atlas-forecast",
+            "name": "Atlas Forecast Monitor",
+            "description": "Tracks pipeline health and projected revenue shifts.",
             "provider": "Anthropic",
             "model": "claude-3.5-sonnet",
             "tools": ["search", "summarize"],
-            "author": "demo-team",
+            "author": "northstar-demo",
         },
         {
-            "id": "agent-claude-policy",
-            "name": "Policy Guide",
-            "description": "Reviews policy and process gaps.",
+            "id": "agent-northstar-policy",
+            "name": "Northstar Policy Copilot",
+            "description": "Reviews process drift and control exceptions.",
             "provider": "Anthropic",
             "model": "claude-3-opus",
             "tools": ["search", "compare"],
-            "author": "demo-team",
+            "author": "northstar-demo",
         },
         {
-            "id": "agent-openai-insights",
-            "name": "Insight Bot",
-            "description": "Finds adoption and usage signals.",
+            "id": "agent-signal-insights",
+            "name": "Signal Insights Bot",
+            "description": "Finds user engagement and adoption anomalies.",
             "provider": "OpenAI",
             "model": "gpt-4o-mini",
             "tools": ["aggregate", "chart"],
-            "author": "demo-team",
+            "author": "northstar-demo",
         },
         {
-            "id": "agent-openai-qa",
-            "name": "Support Copilot",
-            "description": "Answers common support questions.",
+            "id": "agent-qa-rapid",
+            "name": "Rapid Support Coach",
+            "description": "Answers product issues and customer support questions.",
             "provider": "OpenAI",
             "model": "gpt-4o",
             "tools": ["answer", "search"],
-            "author": "demo-team",
+            "author": "northstar-demo",
         },
         {
-            "id": "agent-openai-contract",
-            "name": "Contract Reviewer",
-            "description": "Highlights contract risks and edge cases.",
+            "id": "agent-contract-guard",
+            "name": "Contract Guard",
+            "description": "Highlights legal, commercial, and renewal exposure.",
             "provider": "OpenAI",
             "model": "gpt-4.1",
             "tools": ["compare", "risk"],
-            "author": "demo-team",
+            "author": "northstar-demo",
         },
         {
-            "id": "agent-claude-reporting",
-            "name": "Reporting Assistant",
-            "description": "Builds reports and trend summaries.",
+            "id": "agent-board-briefing",
+            "name": "Board Briefing Studio",
+            "description": "Creates executive summaries and performance narratives.",
             "provider": "Anthropic",
             "model": "claude-3.5-haiku",
             "tools": ["report", "chart"],
-            "author": "demo-team",
+            "author": "northstar-demo",
         },
     ]
 
     conversations: list[dict[str, Any]] = []
     titles = [
-        "Weekly adoption summary",
-        "Policy review",
-        "Customer health check",
-        "Contract red flags",
-        "Onboarding recap",
-        "Usage trend analysis",
-        "Risk review",
-        "Platform rollout",
-        "Executive report",
-        "Support triage",
+        "Q4 launch readiness",
+        "Northstar policy review",
+        "Customer retention pulse",
+        "Commercial risk watchlist",
+        "Onboarding acceleration plan",
+        "Usage trend anomaly review",
+        "Market response brief",
+        "Partner rollout dashboard",
+        "Executive scorecard update",
+        "Support escalation sweep",
     ]
     for index in range(24):
         user = users[index % len(users)]
@@ -170,8 +172,8 @@ def build_demo_seed() -> dict[str, Any]:
                 "createdAt": created_at,
             }
             messages.append(message)
-            if not is_user_message and (assistant_index % 6 == 0 or (conversation["agent_id"] == "agent-openai-contract" and not contract_review_warning_sent)):
-                if conversation["agent_id"] == "agent-openai-contract":
+            if not is_user_message and (assistant_index % 6 == 0 or (conversation["agent_id"] == "agent-contract-guard" and not contract_review_warning_sent)):
+                if conversation["agent_id"] == "agent-contract-guard":
                     rating = "thumbs-down"
                     contract_review_warning_sent = True
                 else:
@@ -230,16 +232,16 @@ def validate_demo_contract(payload: dict[str, Any]) -> list[str]:
                 f"found {feedback_ratio:.2%}."
             )
 
-    contract_reviewer = next((agent for agent in agents if agent.get("name") == "Contract Reviewer"), None)
+    contract_reviewer = next((agent for agent in agents if agent.get("name") in {"Contract Reviewer", "Contract Guard"}), None)
     if contract_reviewer is None:
-        errors.append("Missing the required 'Contract Reviewer' agent in the seed dataset.")
+        errors.append("Missing the required contract-risk agent in the seed dataset.")
     else:
         contract_conversations = [
             conversation for conversation in conversations if conversation.get("agent_id") == contract_reviewer["id"]
         ]
         contract_conversation_count = len(contract_conversations)
         if contract_conversation_count == 0:
-            errors.append("The Contract Reviewer agent does not appear in any conversation.")
+            errors.append("The contract-risk agent does not appear in any conversation.")
         contract_downvotes = [
             event for event in feedback_events if event.get("rating") == "thumbs-down" and any(
                 event.get("conversationId") == conversation.get("conversationId")
@@ -247,7 +249,7 @@ def validate_demo_contract(payload: dict[str, Any]) -> list[str]:
             )
         ]
         if len(contract_downvotes) == 0:
-            errors.append("The Contract Reviewer agent has no thumbs-down feedback events.")
+            errors.append("The contract-risk agent has no thumbs-down feedback events.")
 
     return errors
 

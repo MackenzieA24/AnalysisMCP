@@ -6,11 +6,13 @@ from analysis_mcp.env import get_settings
 from analysis_mcp.tools.agent_tools import register as register_agents
 from analysis_mcp.tools.conversation_tools import register as register_conversations
 from analysis_mcp.tools.metrics_tools import register as register_metrics
+from analysis_mcp.tools.system_tools import register as register_system
 from analysis_mcp.tools.token_tools import register as register_tokens
 from analysis_mcp.tools.user_tools import register as register_users
 
 mcp = FastMCP("analysis-mcp")
 
+register_system(mcp)
 register_metrics(mcp)
 register_users(mcp)
 register_conversations(mcp)

@@ -17,3 +17,15 @@ def test_build_demo_seed_has_expected_demo_contract() -> None:
 
     contract = validate_demo_contract(payload)
     assert contract == []
+
+
+def test_build_demo_seed_uses_fresh_demo_identity() -> None:
+    payload = build_demo_seed()
+    legacy_names = {"Ava", "Noah", "Mila", "Leo", "Zoe", "Eli", "Nia", "Owen", "Ivy", "Kai"}
+    legacy_titles = {"Weekly adoption summary", "Policy review", "Customer health check", "Contract red flags"}
+
+    names = {user["name"].split()[0] for user in payload["users"]}
+    titles = {conversation["title"] for conversation in payload["conversations"]}
+
+    assert names.isdisjoint(legacy_names)
+    assert titles.isdisjoint(legacy_titles)
