@@ -39,6 +39,30 @@ def test_server_handshake_and_tool_failure_are_structured() -> None:
     assert "get_overview_metrics" in names
     payload = result.get("structuredContent") or result.get("content") or result
     assert isinstance(payload, dict)
+    assert "total_users" in payload
+    assert payload.get("total_users") >= 1
+
+
+async def _invalid_tool_call_raises_structured_error() -> dict:
+    env = os.environ.copy()
+    src_path = r"C:\Users\aylor\StudioProjects\AnalysisMCP1.1\src"
+    env["PYTHONPATH"] = src_path + os.pathsep + env.get("PYTHONPATH", "")
+    server = StdioServerParameters(command=sys.executable, args=["-m", "analysis_mcp.server"], env=env)
+    async with stdio_client(server) as (read_stream, write_stream):
+        async with ClientSession(read_stream, write_stream) as session:
+            await session.initialize()
+            response = await session.call_tool("missing_tool", {})
+            return response.model_dump()
+
+
+def test_invalid_tool_name_returns_structured_error() -> None:
+    result = asyncio.run(asyncio.wait_for(_invalid_tool_call_raises_structured_error(), timeout=15))
+    payload = result.get("structuredContent") or result.get("content") or result
+    if isinstance(payload, list) and payload and isinstance(payload[0], dict):
+        payload_text = payload[0].get("text", "")
+        assert "unknown tool" in payload_text.lower()
+        return
+    assert isinstance(payload, dict)
     assert payload.get("ok") is False or "error" in str(payload).lower()
 
 
