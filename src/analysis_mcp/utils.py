@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+import inspect
 from datetime import datetime
 from typing import Any
 
@@ -20,6 +22,18 @@ def normalise_model_name(value: Any) -> str:
 
 
 def safe_tool_call(fn):
+    if inspect.iscoroutinefunction(fn):
+
+        @functools.wraps(fn)
+        async def async_wrapper(*args, **kwargs):
+            try:
+                return await fn(*args, **kwargs)
+            except Exception as exc:  # pragma: no cover - safety layer for MCP tools
+                return {"ok": False, "error": str(exc)}
+
+        return async_wrapper
+
+    @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         try:
             return fn(*args, **kwargs)

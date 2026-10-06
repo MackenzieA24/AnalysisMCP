@@ -30,7 +30,13 @@ _client: AsyncIOMotorClient | None = None
 def get_client() -> AsyncIOMotorClient:
     global _client
     if _client is None:
-        _client = AsyncIOMotorClient(build_mongo_uri())
+        _client = AsyncIOMotorClient(
+            build_mongo_uri(),
+            serverSelectionTimeoutMS=1000,
+            connectTimeoutMS=1000,
+            socketTimeoutMS=1000,
+            waitQueueTimeoutMS=1000,
+        )
     return _client
 
 
