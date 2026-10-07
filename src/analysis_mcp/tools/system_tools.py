@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
+
+from pymongo.errors import PyMongoError
 
 from analysis_mcp.db.mongo import get_database
 from analysis_mcp.env import get_settings
@@ -42,7 +44,7 @@ def register(mcp) -> None:
         try:
             db = get_database()
             await db.command("ping")
-        except Exception as exc:  # pragma: no cover - safety layer for MCP tools
+        except (ConnectionError, OSError, PyMongoError, TimeoutError) as exc:  # pragma: no cover - safety layer for MCP tools
             status["ok"] = False
             status["status"] = "error"
             status["error"] = str(exc)
@@ -53,8 +55,6 @@ def register(mcp) -> None:
     @safe_tool_call
     async def get_current_datetime() -> dict[str, str]:
         return {
-            "datetime": datetime.now(timezone.utc).isoformat(),
+            "datetime": datetime.now(UTC).isoformat(),
             "timezone": "UTC",
         }
-
-    return get_system_status, get_current_datetime

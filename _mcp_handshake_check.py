@@ -11,12 +11,11 @@ async def main() -> None:
     src_path = r'C:\Users\aylor\StudioProjects\AnalysisMCP1.1\src'
     env['PYTHONPATH'] = src_path + os.pathsep + env.get('PYTHONPATH', '')
     server = StdioServerParameters(command=sys.executable, args=['-m', 'analysis_mcp.server'], env=env)
-    async with stdio_client(server) as (read_stream, write_stream):
-        async with ClientSession(read_stream, write_stream) as session:
-            await session.initialize()
-            tools = await session.list_tools()
-            print([tool.name for tool in tools.tools])
-            result = await session.call_tool('get_overview_metrics', {})
-            print(result)
+    async with stdio_client(server) as (read_stream, write_stream), ClientSession(read_stream, write_stream) as session:
+        await session.initialize()
+        tools = await session.list_tools()
+        print([tool.name for tool in tools.tools])
+        result = await session.call_tool('get_overview_metrics', {})
+        print(result)
 
 asyncio.run(main())

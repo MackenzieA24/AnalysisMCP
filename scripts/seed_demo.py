@@ -6,9 +6,11 @@ from __future__ import annotations
 import asyncio
 import random
 import sys
-from datetime import date, datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
+
+from pymongo.errors import PyMongoError
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -22,7 +24,7 @@ from analysis_mcp.db.mongo import get_database
 
 def build_demo_seed() -> dict[str, Any]:
     """Return the seed payload used by the demo and verify scripts."""
-    today = date.today()
+    today = datetime.now(UTC).date()
     window_start = today - timedelta(days=89)
     rng = random.Random(20261006)
 
@@ -261,7 +263,7 @@ async def seed_demo_database(db=None) -> dict[str, Any]:
 
     try:
         await db.command("ping")
-    except Exception as exc:  # pragma: no cover - environment-specific connection check
+    except PyMongoError as exc:  # pragma: no cover - environment-specific connection check
         return {
             "status": "skipped",
             "message": "Demo MongoDB is not running. Start it with `docker compose -f docker-compose.demo.yml up -d`.",

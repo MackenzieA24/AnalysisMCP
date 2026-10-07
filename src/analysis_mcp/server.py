@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from mcp.server.fastmcp import FastMCP
 
 from analysis_mcp.env import get_settings
@@ -25,7 +27,14 @@ def main(run_server: bool = False) -> None:
     print(f"Starting AnalysisMCP in {settings.mcp_transport} mode")
     print(f"MongoDB target: {settings.mongodb_host}:{settings.mongodb_port}/{settings.mongodb_database}")
     if run_server:
-        mcp.run(transport=settings.mcp_transport)
+        transport: Literal["stdio", "sse", "streamable-http"] = (
+            "stdio"
+            if settings.mcp_transport == "stdio"
+            else "sse"
+            if settings.mcp_transport == "sse"
+            else "streamable-http"
+        )
+        mcp.run(transport=transport)
 
 
 if __name__ == "__main__":

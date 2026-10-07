@@ -28,5 +28,3 @@ def register(mcp) -> None:
     async def get_user_details(user_id: str) -> dict[str, Any]:
         db = get_database()
         return await fetch_user_details(db, user_id)
-
-    return get_users, get_user_details

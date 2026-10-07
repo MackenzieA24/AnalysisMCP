@@ -8,6 +8,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from pymongo.errors import PyMongoError
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 if str(ROOT) not in sys.path:
@@ -29,7 +31,7 @@ async def verify_demo_database(db=None) -> tuple[bool, list[str], dict[str, Any]
 
     try:
         await db.command("ping")
-    except Exception as exc:  # pragma: no cover - environment-specific connection check
+    except PyMongoError as exc:  # pragma: no cover - environment-specific connection check
         return False, [f"MongoDB unavailable: {exc}"], payload
 
     counts = {

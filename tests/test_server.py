@@ -26,12 +26,11 @@ async def _server_tools_and_tool_result() -> tuple[list[str], dict]:
     src_path = r"C:\Users\aylor\StudioProjects\AnalysisMCP1.1\src"
     env["PYTHONPATH"] = src_path + os.pathsep + env.get("PYTHONPATH", "")
     server = StdioServerParameters(command=sys.executable, args=["-m", "analysis_mcp.server"], env=env)
-    async with stdio_client(server) as (read_stream, write_stream):
-        async with ClientSession(read_stream, write_stream) as session:
-            await session.initialize()
-            tools = await session.list_tools()
-            response = await session.call_tool("get_overview_metrics", {})
-            return [tool.name for tool in tools.tools], response.model_dump()
+    async with stdio_client(server) as (read_stream, write_stream), ClientSession(read_stream, write_stream) as session:
+        await session.initialize()
+        tools = await session.list_tools()
+        response = await session.call_tool("get_overview_metrics", {})
+        return [tool.name for tool in tools.tools], response.model_dump()
 
 
 def test_server_handshake_and_tool_failure_are_structured() -> None:
@@ -48,11 +47,10 @@ async def _invalid_tool_call_raises_structured_error() -> dict:
     src_path = r"C:\Users\aylor\StudioProjects\AnalysisMCP1.1\src"
     env["PYTHONPATH"] = src_path + os.pathsep + env.get("PYTHONPATH", "")
     server = StdioServerParameters(command=sys.executable, args=["-m", "analysis_mcp.server"], env=env)
-    async with stdio_client(server) as (read_stream, write_stream):
-        async with ClientSession(read_stream, write_stream) as session:
-            await session.initialize()
-            response = await session.call_tool("missing_tool", {})
-            return response.model_dump()
+    async with stdio_client(server) as (read_stream, write_stream), ClientSession(read_stream, write_stream) as session:
+        await session.initialize()
+        response = await session.call_tool("missing_tool", {})
+        return response.model_dump()
 
 
 def test_invalid_tool_name_returns_structured_error() -> None:

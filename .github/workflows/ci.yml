@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_DATABASE: analysis_mcp_demo
+
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]' pip-audit
+
+      - name: Lint
+        run: python -m ruff check .
+
+      - name: Type-check
+        run: python -m mypy src
+
+      - name: Seed demo database
+        run: python scripts/seed_demo.py
+
+      - name: Run test suite
+        run: python -m pytest -q
+
+      - name: Dependency audit
+        run: |
+          python -c "from pathlib import Path; Path('requirements.audit.txt').write_text('motor\npydantic-settings\npython-dotenv\nmcp\n')"
+          pip-audit -r requirements.audit.txt --desc

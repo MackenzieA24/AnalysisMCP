@@ -35,5 +35,3 @@ def register(mcp) -> None:
     async def get_model_usage(limit: int = 20) -> dict[str, Any]:
         db = get_database()
         return await fetch_model_usage(db, limit=limit)
-
-    return get_agents, get_agent_usage, get_model_usage

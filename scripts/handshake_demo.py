@@ -21,15 +21,14 @@ async def run_demo_handshake() -> None:
         env=env,
     )
 
-    async with stdio_client(server) as (read_stream, write_stream):
-        async with ClientSession(read_stream, write_stream) as session:
-            await session.initialize()
-            tool_list = await session.list_tools()
-            tool_names = [tool.name for tool in tool_list.tools]
-            print(f"Tools: {tool_names}")
+    async with stdio_client(server) as (read_stream, write_stream), ClientSession(read_stream, write_stream) as session:
+        await session.initialize()
+        tool_list = await session.list_tools()
+        tool_names = [tool.name for tool in tool_list.tools]
+        print(f"Tools: {tool_names}")
 
-            result = await session.call_tool("get_overview_metrics", {})
-            print(result.model_dump_json(indent=2))
+        result = await session.call_tool("get_overview_metrics", {})
+        print(result.model_dump_json(indent=2))
 
 
 if __name__ == "__main__":
