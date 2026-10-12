@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from typing import Literal
 
 from mcp.server.fastmcp import FastMCP
@@ -24,8 +25,12 @@ register_tokens(mcp)
 
 def main(run_server: bool = False) -> None:
     settings = get_settings()
-    print(f"Starting AnalysisMCP in {settings.mcp_transport} mode")
-    print(f"MongoDB target: {settings.mongodb_host}:{settings.mongodb_port}/{settings.mongodb_database}")
+    # stderr only: in stdio mode stdout is the JSON-RPC channel
+    print(f"Starting AnalysisMCP in {settings.mcp_transport} mode", file=sys.stderr)
+    print(
+        f"MongoDB target: {settings.mongodb_host}:{settings.mongodb_port}/{settings.mongodb_database}",
+        file=sys.stderr,
+    )
     if run_server:
         transport: Literal["stdio", "sse", "streamable-http"] = (
             "stdio"

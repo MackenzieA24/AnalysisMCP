@@ -3,11 +3,15 @@
 
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DENYLIST = ROOT / ".publish-denylist"
+
+# Absolute paths into a real user's home directory, e.g. C:\Users\name or /home/name
+_HOME_PATH = re.compile(r"[A-Za-z]:[\\/]+Users[\\/]+\w|/(?:Users|home)/\w")
 
 
 def _git_tracked_files() -> list[Path]:
@@ -30,6 +34,8 @@ def main() -> None:
             for term in deny_terms:
                 if term in text:
                     raise SystemExit(f"Found denylisted term {term!r} in {path}")
+            if path != Path(__file__).resolve() and (match := _HOME_PATH.search(text)):
+                raise SystemExit(f"Found absolute home-directory path {match.group()!r} in {path}")
 
     print("Public repo check passed.")
 

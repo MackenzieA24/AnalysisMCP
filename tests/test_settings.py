@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from analysis_mcp.db.mongo import build_mongo_uri, close_client, get_database
@@ -11,6 +13,16 @@ def test_settings_defaults() -> None:
     assert settings.mongodb_host == "localhost"
     assert settings.mongodb_database == "analysis_mcp_demo"
     assert settings.mcp_transport == "stdio"
+
+
+def test_settings_ignore_env_file_in_working_directory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / ".env").write_text("MONGODB_HOST=not-the-demo-host\n", encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("MONGODB_HOST", raising=False)
+
+    assert Settings().mongodb_host == "localhost"
 
 
 def test_build_mongo_uri_default() -> None:
