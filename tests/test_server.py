@@ -3,11 +3,15 @@ from __future__ import annotations
 import asyncio
 import os
 import sys
+from pathlib import Path
 
+import pytest
 from mcp.client.session import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
 from analysis_mcp.server import main, mcp
+
+SRC_PATH = Path(__file__).resolve().parents[1] / "src"
 
 
 def test_server_has_mcp_instance() -> None:
@@ -23,7 +27,7 @@ def test_server_exposes_registered_tools() -> None:
 
 async def _server_tools_and_tool_result() -> tuple[list[str], dict]:
     env = os.environ.copy()
-    src_path = r"C:\Users\aylor\StudioProjects\AnalysisMCP1.1\src"
+    src_path = str(SRC_PATH)
     env["PYTHONPATH"] = src_path + os.pathsep + env.get("PYTHONPATH", "")
     server = StdioServerParameters(command=sys.executable, args=["-m", "analysis_mcp.server"], env=env)
     async with stdio_client(server) as (read_stream, write_stream), ClientSession(read_stream, write_stream) as session:
@@ -44,7 +48,7 @@ def test_server_handshake_and_tool_failure_are_structured() -> None:
 
 async def _invalid_tool_call_raises_structured_error() -> dict:
     env = os.environ.copy()
-    src_path = r"C:\Users\aylor\StudioProjects\AnalysisMCP1.1\src"
+    src_path = str(SRC_PATH)
     env["PYTHONPATH"] = src_path + os.pathsep + env.get("PYTHONPATH", "")
     server = StdioServerParameters(command=sys.executable, args=["-m", "analysis_mcp.server"], env=env)
     async with stdio_client(server) as (read_stream, write_stream), ClientSession(read_stream, write_stream) as session:
@@ -66,3 +70,8 @@ def test_invalid_tool_name_returns_structured_error() -> None:
 
 def test_main_runs_without_error() -> None:
     main()
+
+
+def test_main_keeps_stdout_clear_for_json_rpc(capsys: pytest.CaptureFixture[str]) -> None:
+    main()
+    assert capsys.readouterr().out == ""
