@@ -28,7 +28,7 @@ async def run_demo_handshake() -> None:
         print(f"Tools: {tool_names}")
 
         result = await session.call_tool("get_overview_metrics", {})
-        print(result.model_dump_json(indent=2))
+        print(result.model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

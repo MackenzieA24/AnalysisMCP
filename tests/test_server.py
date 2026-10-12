@@ -34,7 +34,7 @@ async def _server_tools_and_tool_result() -> tuple[list[str], dict]:
         await session.initialize()
         tools = await session.list_tools()
         response = await session.call_tool("get_overview_metrics", {})
-        return [tool.name for tool in tools.tools], response.model_dump()
+        return [tool.name for tool in tools.tools], response.model_dump(by_alias=True)
 
 
 def test_server_handshake_and_tool_failure_are_structured() -> None:
@@ -54,7 +54,7 @@ async def _invalid_tool_call_raises_structured_error() -> dict:
     async with stdio_client(server) as (read_stream, write_stream), ClientSession(read_stream, write_stream) as session:
         await session.initialize()
         response = await session.call_tool("missing_tool", {})
-        return response.model_dump()
+        return response.model_dump(by_alias=True)
 
 
 def test_invalid_tool_name_returns_structured_error() -> None:
