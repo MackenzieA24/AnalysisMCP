@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import sys
+from importlib.metadata import version
 from typing import Literal
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from analysis_mcp.env import get_settings
 from analysis_mcp.tools.agent_tools import register as register_agents
@@ -13,7 +14,8 @@ from analysis_mcp.tools.system_tools import register as register_system
 from analysis_mcp.tools.token_tools import register as register_tokens
 from analysis_mcp.tools.user_tools import register as register_users
 
-mcp = FastMCP("analysis-mcp")
+# mcp 2.x reports an empty server version unless one is passed explicitly
+mcp = MCPServer("analysis-mcp", version=version("analysis-mcp"))
 
 register_system(mcp)
 register_metrics(mcp)
@@ -32,14 +34,14 @@ def main(run_server: bool = False) -> None:
         file=sys.stderr,
     )
     if run_server:
-        transport: Literal["stdio", "sse", "streamable-http"] = (
-            "stdio"
-            if settings.mcp_transport == "stdio"
-            else "sse"
-            if settings.mcp_transport == "sse"
-            else "streamable-http"
-        )
-        mcp.run(transport=transport)
+        if settings.mcp_transport == "stdio":
+            mcp.run(transport="stdio")
+        else:
+            # mcp 2.x takes network settings on run() rather than the constructor
+            transport: Literal["sse", "streamable-http"] = (
+                "sse" if settings.mcp_transport == "sse" else "streamable-http"
+            )
+            mcp.run(transport=transport, port=settings.mcp_http_port)
 
 
 if __name__ == "__main__":
